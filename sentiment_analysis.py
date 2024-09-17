@@ -2,14 +2,9 @@ import pandas as pd
 from ntscraper import Nitter
 import re
 from nltk.corpus import stopwords
-import nltk
 import emoji
 from pysentimiento import create_analyzer
 from langdetect import detect
-import matplotlib.pyplot as plt
-
-scraper = Nitter(log_level= 0, skip_instance_check=False)
-language = ""
 
 
 def clean_tweet(tweet):
@@ -18,7 +13,7 @@ def clean_tweet(tweet):
     tweet = re.sub(r'@\w+', '', tweet)  # Deletes mentions
     tweet = re.sub(r'#\w+', '', tweet)  # Deletes hashtags
     tweet = re.sub(r'\d+', '', tweet)  # Deletes numbers
-    tweet = ' '.join([word for word in tweet.split() if word not in stop_words])
+    tweet = ' '.join([word for word in tweet.split() if word not in stopwords])
     tweet = emoji.replace_emoji(tweet, replace= '') # Deletes emojis
     return tweet
 
@@ -69,34 +64,11 @@ def tweets_to_df(tweets):
         final_tweets.append(data)
     df = pd.DataFrame(final_tweets)
     df.columns = ["profile_id", "text"]
-    print(final_tweets)
+    
+    labels = ['POS', 'NEU', 'NEG', 'DOMINANT_SENTIMENT']
+    df[labels] = df.apply(apply_sentiment, axis=1)
     return df
 
 
-tweets = get_tweets(query="estoy cansado de", lang="es", num_tweets= 10)
-df = tweets_to_df(tweets)
 
-
-nltk.download('stopwords')
-stopword_en = nltk.corpus.stopwords.words('english')
-stopword_es = nltk.corpus.stopwords.words('spanish')
-stop_words = stopword_en + stopword_es
-
-labels = ['POS', 'NEU', 'NEG', 'DOMINANT_SENTIMENT']
-df[labels] = df.apply(apply_sentiment, axis=1)
-
-
-plt.figure(figsize=(10,6))
-plt.hist(df['POS'], bins= 20, label='POS', color= 'blue')
-plt.hist(df['NEU'], bins=20, alpha=0.7, label='NEU', color='green')
-plt.hist(df['NEG'], bins=20, alpha=0.7, label='NEG', color='red')
-
-# Title and labels
-plt.title('Distribución de Sentimientos (POS, NEU, NEG)')
-plt.xlabel('Valor de Sentimiento')
-plt.ylabel('Frecuencia')
-plt.legend()
-
-# Show visuals
-plt.show()
 
