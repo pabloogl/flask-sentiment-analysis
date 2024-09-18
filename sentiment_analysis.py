@@ -1,11 +1,20 @@
 import pandas as pd
 from ntscraper import Nitter
 import re
+import nltk
 from nltk.corpus import stopwords
 import emoji
 from pysentimiento import create_analyzer
 from langdetect import detect
 
+
+scraper = Nitter(log_level=0, skip_instance_check=False)
+language = ""
+
+nltk.download('stopwords')
+stopword_en = stopwords.words('english')
+stopword_es = stopwords.words('spanish')
+stop_words = stopword_en + stopword_es
 
 def clean_tweet(tweet):
     tweet = tweet.lower()
@@ -13,7 +22,7 @@ def clean_tweet(tweet):
     tweet = re.sub(r'@\w+', '', tweet)  # Deletes mentions
     tweet = re.sub(r'#\w+', '', tweet)  # Deletes hashtags
     tweet = re.sub(r'\d+', '', tweet)  # Deletes numbers
-    tweet = ' '.join([word for word in tweet.split() if word not in stopwords])
+    tweet = ' '.join([word for word in tweet.split() if word not in stop_words])
     tweet = emoji.replace_emoji(tweet, replace= '') # Deletes emojis
     return tweet
 

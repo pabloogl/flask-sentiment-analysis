@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Sentiment Analysis</title>
 </head>
 <body>
-    <h1>To-Do List</h1>
-    <form action="{{ url_for('add_todo') }}" method="POST">
-        <input type="text" name="todo" placeholder="Nueva tarea">
-        <button type="submit">Añadir</button>
+    <h1>Análisis de Sentimientos</h1>
+    <form action="/result" method="get">
+        <label for="query">Consulta:</label>
+        <input type="text" id="query" name="query" required><br><br>
+        
+        <label for="lang">Idioma:</label>
+        <select id="lang" name="lang">
+            <option value="es">Español</option>
+            <option value="en">Inglés</option>
+        </select><br><br>
+        
+        <label for="num_tweets">Número de Tweets:</label>
+        <input type="number" id="num_tweets" name="num_tweets" value="10" min="1"><br><br>
+        
+        <input type="submit" value="Analizar Sentimientos">
     </form>
-    <ul>
-        {% for todo in todos %}
-        <li>
-            {{ todo }} <a href="{{ url_for('delete_todo', todo_id=loop.index0) }}">Eliminar</a>
-        </li>
-        {% endfor %}
-    </ul>
 </body>
 </html>

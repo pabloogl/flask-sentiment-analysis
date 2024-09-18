@@ -1,20 +1,22 @@
 # Usar una imagen base de Python
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 # Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo de requisitos
-COPY requirements.txt requirements.txt
+# Copiar los archivos necesarios
+COPY requirements.txt .
+COPY app.py .
+COPY sentiment_analysis.py .
 
-# Instalar las dependencias
-RUN pip install -r requirements.txt
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código de la aplicación
-COPY . .
+# Descargar recursos de NLTK
+RUN python -c "import nltk; nltk.download('stopwords')"
 
-# Exponer el puerto 5000
+# Exponer el puerto
 EXPOSE 5000
 
-# Definir el comando para ejecutar la aplicación
+# Comando para ejecutar la aplicación
 CMD ["python", "app.py"]
